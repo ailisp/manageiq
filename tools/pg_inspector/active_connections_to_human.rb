@@ -172,12 +172,27 @@ module PgInspector
     end
 
     def process_miq_activity_application_name(activity)
+      # Previous format, before https://github.com/ManageIQ/manageiq/pull/15545
+      # For server:
+      # MIQ <pid> Server[<server_compressed_id>], <zone.name>[<zone.compressed_id>]
+      # For worker:
+      # MIQ <pid> <minimal_worker_class_name>[<worker_compressed_id>], s[<server_compressed_id>], <zone.name>[<zone.compressed_id>]
       # Current :application_name format:
       # MIQ|<pid>|<server_id>|<worker_id>|<zone_id>|<class_name>|<zone_name>
+      # Both previous and current is truncated up to 64 characters
       if activity["application_name"].end_with?("...")
         $stderr.puts("Warning: the application_name #{activity["application_name"]} is incomplete.")
       end
-      _, pid, server_id, worker_id, zone_id, class_name, zone_name = activity["application_name"].split("|")
+      if activity["application_name"].start_with?("MIQ|")
+        _, pid, server_id, worker_id, zone_id, class_name, zone_name = activity["application_name"].split("|")
+      else
+        if activity["application_name"].include?(" Server")
+          _, pid, class_name, server_id, zone_name, zone_id = activity["application_name"].split(/[, \[\]]+/)
+          worker_id = "-"
+        else
+          _, pid, class_name, worker_id, server_id, zone_name, zone_id = activity["application_name"].split(/[, \[\]]+/)
+        end
+      end
       activity["pid"] = pid.to_i
       activity["class_name"] = class_name
       activity["server_id"] = uncompress_id(server_id)
