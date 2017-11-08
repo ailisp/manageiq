@@ -199,13 +199,11 @@ module PgInspector
       end
       if activity["application_name"].start_with?("MIQ|")
         _, pid, server_id, worker_id, zone_id, class_name, zone_name = activity["application_name"].split("|")
+      elsif activity["application_name"].include?(" Server")
+        _, pid, class_name, server_id, zone_name, zone_id = activity["application_name"].split(/[, \[\]]+/)
+        worker_id = "-"
       else
-        if activity["application_name"].include?(" Server")
-          _, pid, class_name, server_id, zone_name, zone_id = activity["application_name"].split(/[, \[\]]+/)
-          worker_id = "-"
-        else
           _, pid, class_name, worker_id, server_id, zone_name, zone_id = activity["application_name"].split(/[, \[\]]+/)
-        end
       end
       activity["pid"] = pid.to_i
       activity["class_name"] = class_name
