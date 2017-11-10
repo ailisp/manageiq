@@ -203,7 +203,8 @@ module PgInspector
         _, pid, class_name, server_id, zone_name, zone_id = activity["application_name"].split(/[, \[\]]+/)
         worker_id = "-"
       else
-          _, pid, class_name, worker_id, server_id, zone_name, zone_id = activity["application_name"].split(/[, \[\]]+/)
+        _, pid, class_name, worker_id, _, server_id, zone_name, zone_id = activity["application_name"].split(/[, \[\]]+/)
+        print "=== #{server_id}"
       end
       activity["pid"] = pid.to_i
       activity["class_name"] = class_name
@@ -245,7 +246,7 @@ module PgInspector
       id = uncompress_id(id)
 
       region_number = id_to_region(id)
-      short_id      = (region_number == 0) ? id : id % (region_number * rails_sequence_factor)
+      short_id      = region_number.zero? ? id : id % (region_number * rails_sequence_factor)
 
       return region_number, short_id
     end
@@ -254,7 +255,7 @@ module PgInspector
       if $old_version
         return nil if id.nil?
         region_number, short_id = split_id(id)
-        (region_number == 0) ? short_id.to_s : "#{region_number}#{COMPRESSED_ID_SEPARATOR}#{short_id}"
+        region_number.zero? ? short_id.to_s : "#{region_number}#{COMPRESSED_ID_SEPARATOR}#{short_id}"
       else
         Class.new.include(ActiveRecord::IdRegions).compress_id(id)
       end
@@ -275,7 +276,7 @@ module PgInspector
       )
       servers.each do |server|
         server_activities[server["server_id"]] =
-          server_activities[server["server_id"]].merge(server)
+          server_activities.fetch(server["server_id"], {}).merge(server)
       end
       stat_activities["servers"] = hash_val_array(server_activities)
       stat_activities
