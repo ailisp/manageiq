@@ -17,7 +17,7 @@ module PgInspector
             :type => :string, :short => "c", :default => DEFAULT_OUTPUT_PATH.join("#{PREFIX}human.yml").to_s)
         opt(:output, "Output file",
             :type => :string, :short => "o", :default => DEFAULT_OUTPUT_PATH.join("#{PREFIX}locks_output.yml").to_s)
-        opt(:output_blocked, "Output blocked connections file"
+        opt(:output_blocked, "Output blocked connections file",
             :type => :string, :short => "b", :default => DEFAULT_OUTPUT_PATH.join("#{PREFIX}locks_output_blocked_connections.yml").to_s)
       end
     end
@@ -50,7 +50,7 @@ module PgInspector
         unless conn["blocked_by"].empty?
           some_connection_blocked = true
           puts "Connection #{conn["spid"]} is blocked by #{conn["blocked_by"]}."
-          blocked_connections << {conn["spid"]: conn["blocked_by"]}
+          blocked_connections << {conn["spid"] => conn["blocked_by"]}
         end
       end
       unless some_connection_blocked
