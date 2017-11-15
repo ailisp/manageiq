@@ -13,7 +13,7 @@ echo ""
 echo "inspect_pg runs on $(date)"
 
 # Run step 1, 3 and 4 in sequence, assume step 2 has done before.
-${basedir}/inspect_pg.rb
+bundle exec ${basedir}/inspect_pg.rb
 
 # remove first only if all steps success
 if [ $? -ne '0' ]; then

@@ -7,9 +7,9 @@ if __FILE__ == $PROGRAM_NAME
   $LOAD_PATH.push(File.expand_path(File.join(__dir__, %w(.. .. lib))))
 end
 
-p $LOAD_PATH
 require 'yaml'
 require 'manageiq-gems-pending'
+require 'util/miq-password'
 
 BASE_DIR = __dir__
 DATABASE_YML_FILE_PATH = "#{BASE_DIR}/../../config/database.yml"
