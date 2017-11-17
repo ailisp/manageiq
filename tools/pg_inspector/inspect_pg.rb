@@ -25,6 +25,7 @@ db_host = production_db["host"]
 # system "#{BASE_DIR}/../pg_inspector.rb -h"
 ENV['PGPASSWORD'] = db_password
 system("#{BASE_DIR}/../pg_inspector.rb connections -u #{db_user} -s #{db_host} -i")
+system("#{BASE_DIR}/../pg_inspector.rb servers -u #{db_user} -s #{db_host}")
 system("#{BASE_DIR}/../pg_inspector.rb human")
 success = system("#{BASE_DIR}/../pg_inspector.rb locks")
 if !success

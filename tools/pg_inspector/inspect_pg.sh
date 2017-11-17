@@ -7,10 +7,12 @@ logfile=${logdir}/pg_inspector.log
 # default postgresql password: smartvm
 
 # show message on screen and also append to log file
+rm -f logfile
 exec > >(tee -ia ${logfile})
 exec 2>&1
 echo ""
 echo "inspect_pg runs on $(date)"
+rm -f ${logdir}/pg_inspector_locks_output_blocked_connections.yml
 
 # Run step 1, 3 and 4 in sequence, assume step 2 has done before.
 bundle exec ${basedir}/inspect_pg.rb
@@ -24,5 +26,8 @@ rm -f ${logdir}/pg_inspector_output.tar.gz
 
 # collect the output
 cd ${logdir}
-tar -czf pg_inspector_output.tar.gz pg_inspector*
-echo "Successfully output to ${logdir}/pg_inspector_output.tar.gz"
+echo "Boom! Number of locks: $(grep pid pg_inspector_locks.yml | wc -l )"
+[[ -s pg_inspector_locks_output_blocked_connections.yml ]] && echo "Boom! Something blocked!"
+filename="pg_test_output_$(date +%F-%H%M%S).tar.gz"
+tar -czf ${filename} pg_inspector*
+echo "Successfully output to ${logdir}/${filename}"
