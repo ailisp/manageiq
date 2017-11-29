@@ -33,7 +33,7 @@ module PgInspector
       )
       unless blocked_connections.empty?
         Util.dump_to_yml_file(
-          merge_lock_and_connection,
+          blocked_connections,
           "Blocked connections",
           options[:output_blocked]
         )
