@@ -204,7 +204,6 @@ module PgInspector
         worker_id = "-"
       else
         _, pid, class_name, worker_id, _, server_id, zone_name, zone_id = activity["application_name"].split(/[, \[\]]+/)
-        print "=== #{server_id}"
       end
       activity["pid"] = pid.to_i
       activity["class_name"] = class_name
